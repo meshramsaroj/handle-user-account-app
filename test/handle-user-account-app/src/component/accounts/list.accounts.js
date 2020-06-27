@@ -1,59 +1,114 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import firebase from "../../firebase";
+import { Snackbar, IconButton } from "@material-ui/core";
 
 class ListAccounts extends Component {
   constructor(props) {
     super(props);
-    this.getData = this.getData.bind(this);
+    this.onDeleteAccount = this.onDeleteAccount.bind(this);
+    this.snackBarClose = this.snackBarClose.bind(this);
+
     this.state = {
-      accountData: []
+      accountsData: [],
+      snackBarOpen: false,
+      snackBarMsg: ""
     };
   }
 
   componentDidMount() {
-    this.getData();
-    // console.log(listData);
-  }
-
-  getData() {
-    var listData = [];
-    const ref = firebase.database().ref("accounts");
-    ref.on("value", data => {
-      listData.push(data.val());
+    const accountRef = firebase.database().ref("accounts");
+    accountRef.on("value", snapshot => {
+      let accounts = snapshot.val();
+      let newAccount = [];
+      for (let acc in accounts) {
+        newAccount.push({
+          id: acc,
+          appName: accounts[acc].apps.appName,
+          title: accounts[acc].apps.title
+        });
+      }
       this.setState({
-        accountData: listData
+        accountsData: newAccount
       });
     });
+  }
 
-    console.log(this.state.accountData);
+  snackBarClose() {
+    this.setState({
+      snackBarOpen: false
+    });
+  }
+
+  onDeleteAccount(id) {
+    firebase
+      .database()
+      .ref(`accounts/${id}`)
+      .remove()
+      .then(res => {
+        this.setState({
+          snackBarOpen: true,
+          snackBarMsg: `Deleted Successfully...`
+        });
+      })
+      .catch(err => {
+        this.setState({
+          snackBarOpen: true,
+          snackBarMsg: `failed due to ${err}`
+        });
+      });
   }
 
   render() {
     return (
       <div>
         <div className="container">
+          <Snackbar
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center"
+            }}
+            open={this.state.snackBarOpen}
+            autoHideDuration={2000}
+            onClose={this.snackBarClose}
+            message={<span>{this.state.snackBarMsg}</span>}
+            action={[
+              <IconButton
+                key="close"
+                arial-label="Close"
+                color="inherit"
+                onClick={this.snackBarClose}
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </IconButton>
+            ]}
+          />
           <h1>Accounts List</h1>
           <table className="table mt-4">
             <thead className="table-info">
               <tr>
-                <th scope="col">Account_Id</th>
+                <th scope="col">Id</th>
                 <th scope="col">Title</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {this.state.accountData.map((account,index) => (
-                <tr key={account}>
-                  <td>{index}</td>
-                  <td>{account[index]}</td>
+              {this.state.accountsData.map(account => (
+                <tr key={account.id}>
+                  <td>{account.id}</td>
+                  <td>{account.title}</td>
                   <td className="row">
                     <div className="col">
-                      <button className="btn btn-danger mr-4">delete</button>
+                      <button
+                        className="btn btn-danger mr-4"
+                        onClick={this.onDeleteAccount.bind(this, account.id)}
+                      >
+                        delete
+                      </button>
                     </div>
 
                     <div className="col">
-                      <Link to="/edit-user">
+                      <Link to={"/edit-account/" + account.id}>
                         <button className="btn btn-success">Update</button>
                       </Link>
                     </div>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import firebase from "../../firebase";
+import { Snackbar, IconButton } from "@material-ui/core";
 
 export default class CreateAccount extends Component {
   constructor(props) {
@@ -9,11 +10,14 @@ export default class CreateAccount extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onChangeAppName = this.onChangeAppName.bind(this);
     this.onChangeAppTitle = this.onChangeAppTitle.bind(this);
+    this.snackBarClose = this.snackBarClose.bind(this);
 
     this.state = {
       appName: "",
       title: "",
-      accounts: []
+      accounts: [],
+      snackBarOpen: false,
+      snackBarMsg: ""
     };
   }
 
@@ -48,11 +52,6 @@ export default class CreateAccount extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    const account = {
-      appName: this.state.appName,
-      title: this.state.title
-    };
-
     firebase
       .database()
       .ref("accounts")
@@ -62,21 +61,53 @@ export default class CreateAccount extends Component {
           title: this.state.title
         }
       })
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
+      .then(data => {
+        this.setState({
+          snackBarOpen: true,
+          snackBarMsg: "Created Successfully..."
+        });
+      })
+      .catch(err => {
+        this.setState({
+          snackBarOpen: true,
+          snackBarMsg: `failed due to ${err}`
+        });
+      });
+  }
 
+  snackBarClose() {
     this.setState({
-      title: ""
+      snackBarOpen: false
     });
-    console.log(account);
+    window.location = "/accounts";
   }
 
   render() {
     return (
       <div className="container">
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          open={this.state.snackBarOpen}
+          autoHideDuration={3000}
+          onClose={this.snackBarClose}
+          message={<span>{this.state.snackBarMsg}</span>}
+          action={[
+            <IconButton
+              key="close"
+              arial-label="Close"
+              color="inherit"
+              onClick={this.snackBarClose}
+            >
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </IconButton>
+          ]}
+        />
         <h1 className="text-center mb-5">Create New Account</h1>
 
-        <div className=" form ">
+        <div className=" form w-50 py-4">
           <form onSubmit={this.onSubmit}>
             <div className="form-group">
               <label>App Name</label>

@@ -8,6 +8,7 @@ import ListUsers from "./component/users/list-users";
 import EditUser from "./component/users/edit-user";
 import ListAccounts from "./component/accounts/list.accounts";
 import CreateAccount from "./component/accounts/create-account";
+import EditAccount from "./component/accounts/edit.account";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
         <Route path="/accounts" component={ListAccounts} />
         <Route path="/create-account" component={CreateAccount} />
         <Route path="/create-user" component={CreateUser} />
-        <Route path="/edit-user" component={EditUser} />
+        <Route path="/edit-user/:id" component={EditUser} />
+        <Route path="/edit-account/:id" component={EditAccount} />
       </Router>
     </>
   );

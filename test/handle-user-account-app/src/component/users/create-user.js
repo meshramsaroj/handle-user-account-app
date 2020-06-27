@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "../../css/create.user.css";
 import { Link } from "react-router-dom";
 import firebase from "../../firebase";
+import { Snackbar, IconButton } from "@material-ui/core";
+
 
 class CreateUser extends Component {
   constructor(props) {
@@ -10,11 +12,14 @@ class CreateUser extends Component {
     this.onChangeAccount = this.onChangeAccount.bind(this);
     this.onChangeName = this.onChangeName.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.snackBarClose = this.snackBarClose.bind(this);
 
     this.state = {
       account: "",
       name: "",
-      accounts: []
+      accounts: [],
+      snackBarOpen: false,
+      snackBarMsg: ""
     };
   }
 
@@ -23,16 +28,21 @@ class CreateUser extends Component {
       name: ""
     });
 
-    firebase
-      .database()
-      .ref("accounts")
-      .on("value", snapshot => {
-        const accountData = snapshot.val();
-        const keys = Object.keys(accountData);
-        this.setState({
-          accounts: keys
+    let accountRef = firebase.database().ref("accounts");
+    accountRef.on("value", snapshot => {
+      let accountData = snapshot.val();
+      let newAccount = [];
+      for (let acc in accountData) {
+        newAccount.push({
+          id: acc,
+          appName: accountData[acc].apps.appName,
+          title: accountData[acc].apps.title
         });
+      }
+      this.setState({
+        accounts: newAccount
       });
+    });
   }
 
   onChangeAccount(e) {
@@ -57,17 +67,53 @@ class CreateUser extends Component {
         account: this.state.account,
         name: this.state.name
       })
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
+      .then(() => {
+        this.setState({
+          snackBarOpen: true,
+          snackBarMsg: "Created Successfully..."
+        });
 
+      })
+      .catch(err => {
+        this.setState({
+          snackBarOpen: true,
+          snackBarMsg: `failed due to ${err}`
+        });
+
+      });
+
+  }
+
+  snackBarClose() {
     this.setState({
-      name: ""
+      snackBarOpen: false
     });
+    window.location = "/";
   }
 
   render() {
     return (
       <div className="container">
+         <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          open={this.state.snackBarOpen}
+          autoHideDuration={3000}
+          onClose={this.snackBarClose}
+          message={<span>{this.state.snackBarMsg}</span>}
+          action={[
+            <IconButton
+              key="close"
+              arial-label="Close"
+              color="inherit"
+              onClick={this.snackBarClose}
+            >
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </IconButton>
+          ]}
+        />
         <h1 className="text-center mb-5">Create New User</h1>
 
         <div className=" form border border-info">
@@ -88,7 +134,7 @@ class CreateUser extends Component {
                 onChange={this.onChangeAccount}
               >
                 {this.state.accounts.map(account => (
-                  <option key={account}>{account}</option>
+                  <option key={account.id}>{account.id}</option>
                 ))}
               </select>
             </div>
