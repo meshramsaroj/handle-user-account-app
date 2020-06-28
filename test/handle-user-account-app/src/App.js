@@ -12,7 +12,7 @@ import EditAccount from "./component/accounts/edit.account";
 
 function App() {
   return (
-    <>
+    <div className="container-fluid">
       <Router>
         <Navbar />
         <Route path="/" exact component={ListUsers} />
@@ -22,7 +22,7 @@ function App() {
         <Route path="/edit-user/:id" component={EditUser} />
         <Route path="/edit-account/:id" component={EditAccount} />
       </Router>
-    </>
+    </div>
   );
 }
 

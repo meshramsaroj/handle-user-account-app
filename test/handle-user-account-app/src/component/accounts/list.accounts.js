@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import firebase from "../../firebase";
 import { Snackbar, IconButton } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 class ListAccounts extends Component {
   constructor(props) {
@@ -84,6 +86,7 @@ class ListAccounts extends Component {
             ]}
           />
           <h1>Accounts List</h1>
+
           <table className="table mt-4">
             <thead className="table-info">
               <tr>
@@ -97,21 +100,13 @@ class ListAccounts extends Component {
                 <tr key={account.id}>
                   <td>{account.id}</td>
                   <td>{account.title}</td>
-                  <td className="row">
-                    <div className="col">
-                      <button
-                        className="btn btn-danger mr-4"
-                        onClick={this.onDeleteAccount.bind(this, account.id)}
-                      >
-                        delete
-                      </button>
-                    </div>
-
-                    <div className="col">
-                      <Link to={"/edit-account/" + account.id}>
-                        <button className="btn btn-success">Update</button>
-                      </Link>
-                    </div>
+                  <td>
+                    <DeleteIcon
+                      onClick={this.onDeleteAccount.bind(this, account.id)}
+                    />
+                    <Link to={"/edit-account/" + account.id}>
+                      <EditIcon className="text-dark" />
+                    </Link>
                   </td>
                 </tr>
               ))}

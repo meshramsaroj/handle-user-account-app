@@ -105,9 +105,9 @@ export default class CreateAccount extends Component {
             </IconButton>
           ]}
         />
-        <h1 className="text-center mb-5">Create New Account</h1>
+        <h3 className="text-center mb-5">Create New Account</h3>
 
-        <div className=" form w-50 py-4">
+        <div className="form w-75 m-auto">
           <form onSubmit={this.onSubmit}>
             <div className="form-group">
               <label>App Name</label>

@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import firebase from "../../firebase";
 import { Link } from "react-router-dom";
 import { Snackbar, IconButton } from "@material-ui/core";
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 
 class ListUsers extends Component {
   constructor(props) {
@@ -63,8 +66,8 @@ class ListUsers extends Component {
 
   render() {
     return (
-      <div>
-        <div className="container">
+      <div className="container">
+        <div>
           <Snackbar
             anchorOrigin={{
               vertical: "bottom",
@@ -99,21 +102,11 @@ class ListUsers extends Component {
                 <tr key={user.id}>
                   <td>{user.account}</td>
                   <td>{user.name}</td>
-                  <td className="row">
-                    <div className="col">
-                      <button
-                        className="btn btn-danger mr-4"
-                        onClick={this.onDeleteUser.bind(this, user.id)}
-                      >
-                        delete
-                      </button>
-                    </div>
-
-                    <div className="col">
-                      <Link to={"/edit-user/" + user.id}>
-                        <button className="btn btn-success">Update</button>
-                      </Link>
-                    </div>
+                  <td>
+                    <DeleteIcon onClick={this.onDeleteUser.bind(this, user.id)} />
+                    <Link to={"/edit-user/" + user.id}>
+                     <EditIcon className="text-dark" />
+                    </Link>
                   </td>
                 </tr>
               ))}

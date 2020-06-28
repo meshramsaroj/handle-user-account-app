@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "../../css/create.user.css";
 import { Link } from "react-router-dom";
 import firebase from "../../firebase";
 import { Snackbar, IconButton } from "@material-ui/core";
@@ -114,15 +113,9 @@ class CreateUser extends Component {
             </IconButton>
           ]}
         />
-        <h1 className="text-center mb-5">Create New User</h1>
+        <h3 className="text-center mb-5">Create New User</h3>
 
-        <div className=" form border border-info">
-          <div className="d-flex justify-content-center user">
-            <i
-              className="fa fa-user-circle fa-4x text-info"
-              aria-hidden="true"
-            ></i>
-          </div>
+        <div className=" form w-75 m-auto">
 
           <form onSubmit={this.onSubmit}>
             <div className="form-group">
